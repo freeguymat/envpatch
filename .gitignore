@@ -1,0 +1,11 @@
+node_modules/
+
+.cache/
+.next/
+yarn-debug.log*
+yarn-error.log*
+dist/
+.parcel-cache/
+build/
+.env
+coverage/
