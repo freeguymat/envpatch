@@ -51,6 +51,14 @@ describe('lint', () => {
     expect(q).toBeDefined();
     expect(q.severity).toBe('error');
   });
+
+  test('each issue has a line number', () => {
+    const issues = lint({}, bad);
+    for (const issue of issues) {
+      expect(typeof issue.line).toBe('number');
+      expect(issue.line).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('formatLint', () => {
