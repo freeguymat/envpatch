@@ -13,7 +13,11 @@ const { loadSchema } = require('./schema');
 const [,, command, ...args] = process.argv;
 
 function readEnv(filePath) {
-  const content = fs.readFileSync(path.resolve(filePath), 'utf8');
+  const resolved = path.resolve(filePath);
+  if (!fs.existsSync(resolved)) {
+    fatal(`file not found: ${filePath}`);
+  }
+  const content = fs.readFileSync(resolved, 'utf8');
   return parse(content);
 }
 
@@ -35,7 +39,9 @@ switch (command) {
   case 'patch': {
     if (args.length < 2) fatal('usage: envpatch patch <env> <patchfile>');
     const env = readEnv(args[0]);
-    const patchData = JSON.parse(fs.readFileSync(path.resolve(args[1]), 'utf8'));
+    const patchPath = path.resolve(args[1]);
+    if (!fs.existsSync(patchPath)) fatal(`file not found: ${args[1]}`);
+    const patchData = JSON.parse(fs.readFileSync(patchPath, 'utf8'));
     const patched = patch(env, patchData);
     process.stdout.write(serialize(patched));
     break;
