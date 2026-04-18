@@ -22,6 +22,11 @@ function fromJSON(jsonContent) {
   if (typeof obj !== 'object' || Array.isArray(obj) || obj === null) {
     throw new Error('JSON must be a flat object');
   }
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value !== null) {
+      throw new Error(`JSON must be a flat object (key "${key}" has a nested value)`);
+    }
+  }
   const entries = Object.entries(obj).map(([key, value]) => ({
     type: 'entry',
     key,
