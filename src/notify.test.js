@@ -47,4 +47,14 @@ describe('formatNotification', () => {
     });
     expect(out).toContain('2 change');
   });
+
+  it('includes timestamp in output', () => {
+    const out = formatNotification({
+      timestamp: ts,
+      changes: [{ type: 'added', key: 'FOO', value: 'bar' }],
+      previous: {},
+      current: { FOO: 'bar' }
+    });
+    expect(out).toContain(ts);
+  });
 });
