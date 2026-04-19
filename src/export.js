@@ -4,7 +4,7 @@ const fs = require('fs');
 
 /**
  * Export an env object to a given format string.
- * Supported formats: 'env', 'json', 'yaml'
+ * Supported formats: 'env', 'json', 'yaml', 'yml'
  */
 function exportEnv(env, format = 'env') {
   switch (format.toLowerCase()) {
@@ -26,7 +26,14 @@ function serializeEnv(env) {
     .join('\n') + '\n';
 }
 
+/**
+ * Export env to a file, writing to outputPath or stdout.
+ * Throws if inputPath does not exist or format is unsupported.
+ */
 function exportFile(inputPath, format, outputPath) {
+  if (!fs.existsSync(inputPath)) {
+    throw new Error(`Input file not found: ${inputPath}`);
+  }
   const raw = fs.readFileSync(inputPath, 'utf8');
   const env = parse(raw);
   const output = exportEnv(env, format);
