@@ -1,40 +1,30 @@
-// trim.js — strip leading/trailing whitespace from env values
-
 /**
- * Trim whitespace from values in a parsed env object.
- * @param {Record<string, string>} env
- * @param {string[]} [keys] - if provided, only trim these keys
- * @returns {{ trimmed: Record<string, string>, changes: Array<{key: string, before: string, after: string}> }}
+ * trim.js — strip leading/trailing whitespace from .env values
  */
-export function trim(env, keys) {
-  const trimmed = { ...env };
+
+export function trim(env) {
+  const trimmed = {};
   const changes = [];
 
-  const targets = keys && keys.length > 0 ? keys : Object.keys(env);
-
-  for (const key of targets) {
-    if (!(key in env)) continue;
-    const before = env[key];
-    const after = before.trim();
-    if (before !== after) {
-      trimmed[key] = after;
-      changes.push({ key, before, after });
+  for (const [key, value] of Object.entries(env)) {
+    const after = value.trim();
+    trimmed[key] = after;
+    if (after !== value) {
+      changes.push({ key, before: value, after });
     }
   }
 
   return { trimmed, changes };
 }
 
-/**
- * Format trim results for CLI output.
- * @param {Array<{key: string, before: string, after: string}>} changes
- * @returns {string}
- */
-export function formatTrim(changes) {
+export function formatTrim({ changes }) {
   if (changes.length === 0) return 'No values needed trimming.';
-  const lines = changes.map(
-    ({ key, before, after }) =>
-      `  ${key}: ${JSON.stringify(before)} → ${JSON.stringify(after)}`
-  );
-  return `Trimmed ${changes.length} value(s):\n${lines.join('\n')}`;
+
+  const lines = [`Trimmed ${changes.length} value(s):\n`];
+  for (const { key, before, after } of changes) {
+    lines.push(`  ${key}`);
+    lines.push(`    before: ${JSON.stringify(before)}`);
+    lines.push(`    after:  ${JSON.stringify(after)}`);
+  }
+  return lines.join('\n');
 }
