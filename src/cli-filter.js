@@ -15,13 +15,23 @@ function readEnv(filePath) {
   return parse(fs.readFileSync(abs, 'utf8'));
 }
 
+function parseFlags(flags) {
+  const known = new Set(['--regex', '--json']);
+  for (const flag of flags) {
+    if (!known.has(flag)) fatal(`unknown flag: ${flag}`);
+  }
+  return {
+    useRegex: flags.includes('--regex'),
+    useJson: flags.includes('--json'),
+  };
+}
+
 function runFilter(argv) {
   const [filePath, patternArg, ...flags] = argv;
   if (!filePath) fatal('usage: envpatch filter <file> <pattern> [--regex] [--json]');
   if (!patternArg) fatal('pattern is required');
 
-  const useRegex = flags.includes('--regex');
-  const useJson = flags.includes('--json');
+  const { useRegex, useJson } = parseFlags(flags);
 
   const env = readEnv(filePath);
   const pattern = useRegex ? new RegExp(patternArg) : patternArg;
