@@ -15,8 +15,14 @@ function runExport(argv = process.argv.slice(2)) {
 
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--format' || argv[i] === '-f') {
+      if (!argv[i + 1] || argv[i + 1].startsWith('-')) {
+        fatal('--format requires a value');
+      }
       format = argv[++i];
     } else if (argv[i] === '--output' || argv[i] === '-o') {
+      if (!argv[i + 1] || argv[i + 1].startsWith('-')) {
+        fatal('--output requires a value');
+      }
       outputPath = argv[++i];
     } else if (!argv[i].startsWith('-')) {
       inputPath = argv[i];
