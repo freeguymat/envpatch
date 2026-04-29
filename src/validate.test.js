@@ -47,6 +47,14 @@ describe('validate', () => {
     expect(result.valid).toBe(true);
   });
 
+  test('optional key with pattern validates if present', () => {
+    const result = validate({ OPTIONAL: 'not-a-number' }, {
+      OPTIONAL: { required: false, pattern: /^\d+$/ },
+    });
+    expect(result.valid).toBe(false);
+    expect(result.errors[0]).toMatch(/OPTIONAL/);
+  });
+
   test('returns multiple errors', () => {
     const result = validate({}, ['KEY_A', 'KEY_B', 'KEY_C']);
     expect(result.errors).toHaveLength(3);
